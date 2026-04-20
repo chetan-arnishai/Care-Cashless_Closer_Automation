@@ -1,0 +1,75 @@
+{
+  "cookies": [
+    {
+      "name": "sess_map",
+      "value": "xubzzxxatxbwzufwrdcbyyyertdrcasyrubqqqexxqzwaysfezbdvdfsqvyyecwqybasdcqxstvsdcfzqsdwyqwrxuefqtscyzwvaufrfqbdvtvtvzrrfwwtzeqrfstbrqzqvzyusdquqavedbrcwdxcfsfxszwxcavsdfuqxxyxvddeuwsteesq",
+      "domain": "case.careinsurance.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "AppName",
+      "value": "Intranet",
+      "domain": "case.careinsurance.com",
+      "path": "/",
+      "expires": 1777099418.39838,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "__RequestVerificationToken",
+      "value": "XOuk_vRuZyBQU0dBgoUrtQ4TLVO6nCc-zEUlfSsKtZgNSSmOdp0kBuyePVUY9_yMjbdXlmS95MurWY1i__tzNshJkn81",
+      "domain": "case.careinsurance.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "ASP.NET_SessionId",
+      "value": "ojexkgzn5kkyirvaarvd1t0w",
+      "domain": "case.careinsurance.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "RoleId",
+      "value": "",
+      "domain": "case.careinsurance.com",
+      "path": "/",
+      "expires": 1777099443.191386,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "Claims",
+      "value": "2F16D11B94C2F950F43BE72A27E5FC175E95AC80C85C4BE87C316CF86DA7DCA1E62DBA98BA7B83FF487B6541EF5C27AEB8008164D852254587FD4B3B882C1F79F5C923CEEBD77F5CD125F372CAD54F99CEAB2F4F39CF782191082B5591BC1F78748E0EABFA2EFD1C418A4249F60F76B581D05DB073CE769866FDA9C75ABB7A624ED5A886",
+      "domain": "case.careinsurance.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "BIGipServerCLAIMWEBPROD_91_pool",
+      "value": "!84BpTPdZOmsQyqwyD7cNYE0+615fFZCnI8qYGjM/LZNPzvgKMcdYOiRoIEf4eAupbHEhjhBWVxEV9ew=",
+      "domain": "case.careinsurance.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}
