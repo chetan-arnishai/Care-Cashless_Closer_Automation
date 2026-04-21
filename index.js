@@ -1399,6 +1399,7 @@ let   patientName        = (process.env.AUTO_PATIENT_NAME || '').trim();
 const file1              = (process.env.AUTO_FILE1 || '').trim(); // Main Report (required)
 const file2              = (process.env.AUTO_FILE2 || '').trim(); // Doc_1
 const file3              = (process.env.AUTO_FILE3 || '').trim(); // Doc_2
+const files = [file2, file3];
 
 // Safe logger — always console.log so main.js can capture it
 const log = (...args) => console.log(...args);
@@ -1669,8 +1670,8 @@ function toPascalCase(str) {
 }
 
 function getIntValue(value) {
-  if (value == null) return '';
-  return value.toString().replace(/\D/g, '') || '';
+  if (value == null) return '0';
+  return value.toString().replace(/\D/g, '') || '0';
 }
 
 function formatDateUniversal(dateStr) {
@@ -1697,26 +1698,27 @@ function formatDateUniversal(dateStr) {
 }
 
 function getInclusiveDays(dateStr) {
-  if (!dateStr || dateStr === 'NA') {
+  if (!dateStr || dateStr === 'NA' || dateStr === '-') {
     throw new Error('Invalid date: ' + dateStr);
   }
 
-  const clean = dateStr.replace(/-+/g, '/');
+  // ✅ Strip spaces, then normalize . - into /
+  const clean = dateStr.replace(/\s+/g, '').replace(/[.\-]+/g, '/');
   let [day, month, year] = clean.split('/');
 
   const monthMap = {
-    "01":0,"1":0,"Jan":0,"January":0,
-    "02":1,"2":1,"Feb":1,"February":1,
-    "03":2,"3":2,"Mar":2,"March":2,
-    "04":3,"4":3,"Apr":3,"April":3,
-    "05":4,"5":4,"May":4,
-    "06":5,"6":5,"Jun":5,"June":5,
-    "07":6,"7":6,"Jul":6,"July":6,
-    "08":7,"8":7,"Aug":7,"August":7,
-    "09":8,"9":8,"Sep":8,"September":8,
-    "10":9,"Oct":9,"October":9,
-    "11":10,"Nov":10,"November":10,
-    "12":11,"Dec":11,"December":11
+    "01":0,"1":0,"Jan":0,"jan":0,"January":0,"january":0,
+    "02":1,"2":1,"Feb":1,"feb":1,"February":1,"february":1,
+    "03":2,"3":2,"Mar":2,"mar":2,"March":2,"march":2,
+    "04":3,"4":3,"Apr":3,"apr":3,"April":3,"april":3,
+    "05":4,"5":4,"May":4,"may":4,
+    "06":5,"6":5,"Jun":5,"jun":5,"June":5,"june":5,
+    "07":6,"7":6,"Jul":6,"jul":6,"July":6,"july":6,
+    "08":7,"8":7,"Aug":7,"aug":7,"August":7,"august":7,
+    "09":8,"9":8,"Sep":8,"sep":8,"September":8,"september":8,
+    "10":9,"Oct":9,"oct":9,"October":9,"october":9,
+    "11":10,"Nov":10,"nov":10,"November":10,"november":10,
+    "12":11,"Dec":11,"dec":11,"December":11,"december":11
   };
 
   const monthIndex = monthMap[month];
@@ -1724,30 +1726,27 @@ function getInclusiveDays(dateStr) {
     throw new Error('Invalid month: ' + month);
   }
 
-  if (year.length === 2) {
-    year = 2000 + Number(year);
-  }
+  // ✅ Always convert year to Number
+  year = year.length === 2 ? 2000 + Number(year) : Number(year);
 
   const givenDate = new Date(year, monthIndex, Number(day));
 
-  // ✅ Validate date properly
   if (
-    givenDate.getDate() != Number(day) ||
-    givenDate.getMonth() != monthIndex ||
-    givenDate.getFullYear() != year
+    givenDate.getDate() !== Number(day) ||
+    givenDate.getMonth() !== monthIndex ||
+    givenDate.getFullYear() !== year
   ) {
     throw new Error('Invalid date value');
   }
 
   const today = new Date();
-
   givenDate.setHours(0, 0, 0, 0);
   today.setHours(0, 0, 0, 0);
 
   const diffTime = today - givenDate;
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-  return Math.abs(diffDays) + 1; // ✅ always positive + inclusive
+  return Math.abs(diffDays) + 1;
 }
 
 async function fillDateField(page, selector, rawDate) {
@@ -2057,9 +2056,9 @@ async function fillForm(page) {
   await safeSelect(page, F.gender,                    toPascalCase(reportValues['sex'] || ''));
 
   log('\n-- Section 1: File Uploads --');
-  await safeUpload(page, F.health_id_card_media,              file2, file1);
-  await safeUpload(page, F.patient_photo_media,               file2, file1);
-  await safeUpload(page, F.id_card_media,                     file2, file1);
+  await safeUploadMulti(page, F.health_id_card_media, files, file1);
+  await safeUploadMulti(page, F.patient_photo_media, files, file1);
+  await safeUploadMulti(page, F.id_card_media, files, file1);
 
   log('\n-- Section 1: Radio Buttons --');
   await safeCheck(page, F.relationship_same_as_in_policy_flag_yes);
@@ -2106,12 +2105,12 @@ async function fillForm(page) {
   await safeFill  (page, H.room_no,              '123');
   await safeFill  (page, H.treating_doctor_name, reportValues['treating doctor name']    || 'NA');
   await safeFill  (page, H.radiologist_name,     reportValues['radiologist doctor name'] || 'NA');
-  await safeFill  (page, H.no_of_beds,           getIntValue(reportValues['no. of beds']));
+  await safeFill  (page, H.no_of_beds,           getIntValue(reportValues['no. of beds']) || "0");
 
   await fillDateField(page, H.expected_dod, getCurrentDateFormatted());
 
   log('\n-- Section 2: File Uploads --');
-  await safeUploadMulti(page, H.other_documents_media, file2, file1);
+  await safeUploadMulti(page, H.other_documents_media, files, file1);
 
   log('\n-- Section 2: Radio Buttons --');
   await safeCheck(page, H.treating_doctor_statement_flag_yes);
@@ -2139,7 +2138,7 @@ async function fillForm(page) {
   await fillDateField(page, C.doa, reportValues['doa']);
   await fillDateField(page, C.dod, getCurrentDateFormatted());
 
-  await safeUpload(page, C.clinical_evidence_media, file2, file1);
+  await safeUploadMulti(page, C.clinical_evidence_media, files, file1);
 
   log('\n-- Section 3: Radio Buttons --');
   await safeCheck (page, C.patient_statement_flag_no);
@@ -2154,7 +2153,7 @@ async function fillForm(page) {
   // SECTION 4: CONCLUSION
   // ═══════════════════════════════════════════════════════════════════════════
   log('\n-- Section 4: Conclusion --');
-  await safeUpload     (page, CL.patients_signature_media,    file2, file1);
+  await safeUploadMulti(page, CL.patients_signature_media, files, file1);
   await safeUploadMulti(page, CL.evidence_media,              file1, file1);
   await safeSelect     (page, CL.payable_dropdown,            'true');
   await safeFill       (page, CL.opinion,                     reportValues['any discrepancies & negative findings'] || '');

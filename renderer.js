@@ -146,8 +146,10 @@ btnStart.addEventListener('click', async () => {
   }
 
   // ── Prepare UI for running ─────────────────────────────────────────────────
-  btnStart.disabled = true;
-  setBanner('running', '⏳ Automation is running… Do NOT touch keyboard or mouse.');
+  // btnStart.disabled = true;
+  // setBanner('running', '⏳ Automation is running… Do NOT touch keyboard or mouse.');
+  setBanner('running', '⏳ Automation is running… Click again to restart.');
+  btnStart.textContent = "▶ Start";
 
   // Clear old logs and add separator
   if (logWindow.children.length > 0) appendSeparator();
@@ -166,8 +168,8 @@ btnStart.addEventListener('click', async () => {
 
   // ── Listen for completion ──────────────────────────────────────────────────
   window.api.onAutomationDone(({ success, message }) => {
-    btnStart.disabled = false;
-
+    // btnStart.disabled = false;
+    // btnStart.textContent = "Start";
     if (success) {
       setBanner('success', message);
     } else {

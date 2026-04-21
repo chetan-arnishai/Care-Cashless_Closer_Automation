@@ -273,11 +273,12 @@ function runPython(file1) {
     sendLog('info', `🐍 Running PDF extraction on: ${path.basename(file1)}`);
     sendLog('info', `   Output → inputs/reportvalues.json`);
 
-    const py = spawn('python', [
+    automationProcess = spawn('python', [
       path.join(__dirname, 'test.py'),
       file1,
       outputPath,
     ], { cwd: __dirname });
+    const py = automationProcess;
 
     py.stdout.on('data', (data) => {
       data.toString().split('\n').forEach(line => {
@@ -292,6 +293,7 @@ function runPython(file1) {
     });
 
     py.on('close', (code) => {
+      if (automationProcess === py) automationProcess = null;
       if (code === 0) {
         sendLog('info', '✅ PDF extraction complete → reportvalues.json updated');
         resolve();
@@ -353,7 +355,9 @@ function runAutomation(inputs) {
 // ── IPC: Start Automation ─────────────────────────────────────────────────────
 ipcMain.handle('start-automation', async (_event, inputs) => {
   if (automationProcess) {
-    return { error: 'Automation is already running.' };
+    // return { error: 'Automation is already running.' };
+      automationProcess.kill(); // stop previous
+      automationProcess = null; 
   }
 
   const {
