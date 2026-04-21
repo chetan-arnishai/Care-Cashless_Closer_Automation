@@ -323,14 +323,14 @@ def split_cell(cell_text):
     result = try_known_key_split(cell_text)
     if result:
         key, val = result
-        print(f"   [KNOWN KEY] '{key}' → '{val[:40]}'" if val else f"   [KNOWN KEY] '{key}'")
+        # print(f"   [KNOWN KEY] '{key}' → '{val[:40]}'" if val else f"   [KNOWN KEY] '{key}'")
         return result
 
     key, val = try_heuristic_split(cell_text)
-    if val:
-        print(f"   [NEW KEY - heuristic split] '{key}' → '{val[:40]}'")
-    else:
-        print(f"   [NEW KEY] '{key}'")
+    # if val:
+    #     print(f"   [NEW KEY - heuristic split] '{key}' → '{val[:40]}'")
+    # else:
+    #     print(f"   [NEW KEY] '{key}'")
     return key, val
 
 
