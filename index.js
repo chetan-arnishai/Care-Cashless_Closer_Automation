@@ -1676,7 +1676,8 @@ function getIntValue(value) {
 
 function formatDateUniversal(dateStr) {
   if (!dateStr || dateStr === 'NA') throw new Error('Invalid date: ' + dateStr);
-  const clean = dateStr.replace(/-+/g, '/');
+  const clean = dateStr.replace(/\s+/g, '').replace(/-+/g, '/'); // ✅ only strip spaces, keep - logic same as before
+  // const clean = dateStr.replace(/-+/g, '/');
   let [day, month, year] = clean.split('/');
   const monthMap = {
     "01":"January","1":"January","Jan":"January",
@@ -1692,7 +1693,7 @@ function formatDateUniversal(dateStr) {
     "11":"November","Nov":"November",
     "12":"December","Dec":"December"
   };
-  const fullMonth = monthMap[month];
+  const fullMonth = monthMap[month] || monthMap[month.charAt(0).toUpperCase() + month.slice(1).toLowerCase()];
   if (!fullMonth) throw new Error('Invalid month: ' + month);
   return `${day.padStart(2, '0')}/${fullMonth}/${year}`;
 }
@@ -2131,7 +2132,7 @@ async function fillForm(page) {
   log('\n-- Section 3: Clinical Details --');
   await safeFill  (page, C.reason_for_admission,  reportValues['presenting complaints'] || 'NA');
   await safeFill  (page, C.provisional_diagnosis, reportValues['provisional / final diagnosis']            || 'NA');
-  await safeFill  (page, C.duration_of_illness,   getInclusiveDays(reportValues['doa'])  || '');
+  await safeFill  (page, C.duration_of_illness,   String(getInclusiveDays(reportValues['doa']))  || '');
   await safeSelect(page, C.accident_case_dropdown, 'NO');
 
 
